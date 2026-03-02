@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -9,12 +10,32 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{min-height:100vh;background:linear-gradient(135deg,#0a0f1e 0%,#0d1b2a 50%,#0a1628 100%);font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;color:white}
   ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(62,255,160,0.3);border-radius:2px}
+
+  /* 登录页 */
+  .login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;width:100%;max-width:400px}
+  .login-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px;width:100%;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+  .login-logo{text-align:center;margin-bottom:24px}
+  .login-logo .icon{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#1a8c56,#3effa0);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;box-shadow:0 4px 20px rgba(62,255,160,0.3)}
+  .login-logo h1{font-size:22px;font-weight:700;background:linear-gradient(90deg,#fff,#3effa0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .login-logo p{color:rgba(255,255,255,0.4);font-size:13px;margin-top:4px}
+  .login-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 16px;color:white;font-size:15px;font-family:inherit;outline:none;margin-top:20px;transition:border-color 0.2s}
+  .login-input:focus{border-color:#3effa0;box-shadow:0 0 0 3px rgba(62,255,160,0.1)}
+  .login-input::placeholder{color:rgba(255,255,255,0.3)}
+  .login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#1a8c56,#22c974);border:none;border-radius:12px;color:white;font-size:16px;font-weight:600;cursor:pointer;margin-top:16px;transition:all 0.2s;font-family:inherit}
+  .login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(62,255,160,0.3)}
+  .login-error{color:#ff6b6b;font-size:13px;text-align:center;margin-top:12px;display:none}
+
+  /* 主界面 */
+  .main-page{display:none;flex-direction:column;align-items:center;width:100%}
   .header{width:100%;max-width:720px;display:flex;align-items:center;gap:14px;margin-bottom:24px}
   .logo{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#1a8c56,#3effa0);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(62,255,160,0.3);flex-shrink:0;animation:pulse 3s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.75}}
   .title{font-size:24px;font-weight:700;background:linear-gradient(90deg,#fff,#3effa0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
   .subtitle{color:rgba(255,255,255,0.4);font-size:13px;margin-top:2px}
-  .status{margin-left:auto;background:rgba(62,255,160,0.1);border:1px solid rgba(62,255,160,0.3);border-radius:20px;padding:4px 12px;color:#3effa0;font-size:12px}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .status{background:rgba(62,255,160,0.1);border:1px solid rgba(62,255,160,0.3);border-radius:20px;padding:4px 12px;color:#3effa0;font-size:12px}
+  .logout-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;transition:all 0.2s}
+  .logout-btn:hover{border-color:rgba(255,100,100,0.5);color:#ff6b6b}
   .chat-box{width:100%;max-width:720px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:24px;display:flex;flex-direction:column;height:520px;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.4);overflow:hidden}
   .messages{flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:16px}
   .msg{display:flex;align-items:flex-end;gap:10px}.msg.user{justify-content:flex-end}
@@ -45,42 +66,100 @@
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="logo">💹</div>
-  <div>
-    <div class="title">财智 · 财务规划助理</div>
-    <div class="subtitle">AI驱动 · 专业财务建议 · 智能规划</div>
+
+<!-- 登录页 -->
+<div class="login-page" id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon">💹</div>
+      <h1>财智 · 财务规划助理</h1>
+      <p>请输入访问密码</p>
+    </div>
+    <input type="password" class="login-input" id="passwordInput" placeholder="请输入密码..." />
+    <button class="login-btn" onclick="checkPassword()">进入系统</button>
+    <div class="login-error" id="loginError">密码错误，请重试</div>
   </div>
-  <div class="status">● 在线</div>
 </div>
-<div class="chat-box">
-  <div class="messages" id="messages">
-    <div class="msg ai">
-      <div class="avatar ai">💹</div>
-      <div class="bubble ai">你好！我是 <strong>财智</strong>，你的个人财务规划助理 💰<br><br>我可以帮你制定预算、规划投资、分析收支，或解答任何财务问题。今天有什么我能帮你的？</div>
+
+<!-- 主界面 -->
+<div class="main-page" id="mainPage">
+  <div class="header">
+    <div class="logo">💹</div>
+    <div>
+      <div class="title">财智 · 财务规划助理</div>
+      <div class="subtitle">AI驱动 · 专业财务建议 · 智能规划</div>
+    </div>
+    <div class="header-right">
+      <div class="status">● 在线</div>
+      <button class="logout-btn" onclick="logout()">退出</button>
     </div>
   </div>
-  <div class="input-area">
-    <div class="input-row">
-      <input type="text" id="userInput" placeholder="输入你的财务问题，按 Enter 发送..." />
-      <button id="sendBtn">↑</button>
+
+  <div class="chat-box">
+    <div class="messages" id="messages">
+      <div class="msg ai">
+        <div class="avatar ai">💹</div>
+        <div class="bubble ai">你好！我是 <strong>财智</strong>，你的个人财务规划助理 💰<br><br>我可以帮你制定预算、规划投资、分析收支，或解答任何财务问题。今天有什么我能帮你的？</div>
+      </div>
+    </div>
+    <div class="input-area">
+      <div class="input-row">
+        <input type="text" id="userInput" placeholder="输入你的财务问题，按 Enter 发送..." />
+        <button id="sendBtn">↑</button>
+      </div>
     </div>
   </div>
+
+  <div class="suggestions">
+    <button class="suggest-btn" onclick="sendSuggestion('如何制定月度预算？')">如何制定月度预算？</button>
+    <button class="suggest-btn" onclick="sendSuggestion('我该如何开始投资基金？')">如何开始投资基金？</button>
+    <button class="suggest-btn" onclick="sendSuggestion('怎样规划退休储蓄？')">怎样规划退休储蓄？</button>
+    <button class="suggest-btn" onclick="sendSuggestion('如何快速还清信用卡债务？')">如何还清信用卡债务？</button>
+    <button class="suggest-btn" onclick="sendSuggestion('月收入1万元如何分配才合理？')">月收入1万如何分配？</button>
+  </div>
+  <div class="disclaimer">⚠️ AI建议仅供参考，重大财务决策请咨询专业持牌顾问</div>
 </div>
-<div class="suggestions">
-  <button class="suggest-btn" onclick="sendSuggestion('如何制定月度预算？')">如何制定月度预算？</button>
-  <button class="suggest-btn" onclick="sendSuggestion('我该如何开始投资基金？')">如何开始投资基金？</button>
-  <button class="suggest-btn" onclick="sendSuggestion('怎样规划退休储蓄？')">怎样规划退休储蓄？</button>
-  <button class="suggest-btn" onclick="sendSuggestion('如何快速还清信用卡债务？')">如何还清信用卡债务？</button>
-  <button class="suggest-btn" onclick="sendSuggestion('月收入1万元如何分配才合理？')">月收入1万如何分配？</button>
-</div>
-<div class="disclaimer">⚠️ AI建议仅供参考，重大财务决策请咨询专业持牌顾问</div>
+
 <script>
+const ACCESS_PASSWORD = 'caizhi2024';
+
+// 检查是否已登录
+if(sessionStorage.getItem('loggedIn') === 'true') showMain();
+
+function checkPassword() {
+  const input = document.getElementById('passwordInput').value;
+  if(input === ACCESS_PASSWORD) {
+    sessionStorage.setItem('loggedIn', 'true');
+    showMain();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+  }
+}
+
+function showMain() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'flex';
+  document.getElementById('userInput').focus();
+}
+
+function logout() {
+  sessionStorage.removeItem('loggedIn');
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('mainPage').style.display = 'none';
+  document.getElementById('passwordInput').value = '';
+}
+
+document.getElementById('passwordInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter') checkPassword();
+});
+
 let conversationHistory=[];
 let isLoading=false;
 const messagesEl=document.getElementById('messages');
 const inputEl=document.getElementById('userInput');
 const sendBtn=document.getElementById('sendBtn');
+
 function scrollToBottom(){messagesEl.scrollTop=messagesEl.scrollHeight}
 function addMessage(role,content){
   const msg=document.createElement('div');msg.className=`msg ${role}`;
@@ -98,6 +177,7 @@ function showTyping(){
   msg.appendChild(avatar);msg.appendChild(bubble);messagesEl.appendChild(msg);scrollToBottom()
 }
 function removeTyping(){const el=document.getElementById('typing');if(el)el.remove()}
+
 async function sendMessage(text){
   const userText=text||inputEl.value.trim();
   if(!userText||isLoading)return;
@@ -118,7 +198,6 @@ async function sendMessage(text){
 function sendSuggestion(text){if(!isLoading)sendMessage(text)}
 inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
 sendBtn.addEventListener('click',()=>sendMessage());
-inputEl.focus();
 </script>
 </body>
 </html>
